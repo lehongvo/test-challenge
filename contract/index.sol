@@ -1,11 +1,3 @@
-/**
- *Submitted for verification at polygonscan.com on 2025-02-24
-*/
-
-/**
- *Submitted for verification at polygonscan.com on 2023-10-19
-*/
-
 // File: Challenge/IChallengeFee.sol
 
 
@@ -1059,6 +1051,8 @@ contract ChallengeDetail is IERC721Receiver {
         uint dayLength = _day.length;
         bool isSendSameDay;
         bool isSendFailWithSameDay;
+        uint256[] storage tempHistoryDate = historyDate;
+        uint256[] storage tempHistoryData = historyData;            
 
         if(_stepIndex[dayLength-1] < goal) {
             isSendFailWithSameDay = true;
@@ -1070,24 +1064,24 @@ contract ChallengeDetail is IERC721Receiver {
                 "This day's data had already updated"
             );
 
-            for(uint256 j = 0; j < historyDate.length; j++) {
-                if(historyDate[j] >= _timeRange[0] && historyDate[j] <= _timeRange[1]) {
+            for(uint256 j = 0; j < tempHistoryDate.length; j++) {
+                if(tempHistoryDate[j] >= _timeRange[0] && tempHistoryDate[j] <= _timeRange[1]) {
                     require(
-                        historyData[j] < goal &&
-                        historyData[j] < _stepIndex[i], 
+                        tempHistoryData[j] < goal &&
+                        tempHistoryData[j] < _stepIndex[i], 
                         "Invalid step: exceeds goal or not greater"
                     );
                     isSendSameDay = true;
-                    historyData[j] = _stepIndex[i];
-                    historyDate[j] = _day[i];
+                    tempHistoryData[j] = _stepIndex[i];
+                    tempHistoryDate[j] = _day[i];
                 } else {
                     isSendSameDay = false;
                 }
             }
 
             if(!isSendSameDay) {
-                historyDate.push(_day[i]);
-                historyData.push(_stepIndex[i]);
+                tempHistoryDate.push(_day[i]);
+                tempHistoryData.push(_stepIndex[i]);
                 stepOn[_day[i]] = _stepIndex[i];
             }
 
@@ -1096,7 +1090,13 @@ contract ChallengeDetail is IERC721Receiver {
             }
         }
 
-        if(isSendSameDay) {
+        for(uint256 i = 0; i < tempHistoryDate.length - 1; i++) {
+            if(tempHistoryDate[i] < goal) {
+                isSendFailWithSameDay = false;
+            }
+        }
+
+        if(isSendSameDay && isSendFailWithSameDay) {
             sequence = sequence + dayLength - 1;
         } else {
             sequence = sequence + dayLength;
