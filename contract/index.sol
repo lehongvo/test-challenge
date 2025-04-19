@@ -1,6 +1,5 @@
+// SPDX-License-Identifier: MIT
 // File: Challenge/IChallengeFee.sol
-
-
 
 pragma solidity ^0.8.16;
 
@@ -1090,8 +1089,8 @@ contract ChallengeDetail is IERC721Receiver {
             }
         }
 
-        for(uint256 i = 0; i < tempHistoryDate.length - 1; i++) {
-            if(tempHistoryDate[i] < goal) {
+        for(uint256 i = 0; i < tempHistoryData.length - 1; i++) {
+            if(tempHistoryData[i] < goal) {
                 isSendFailWithSameDay = false;
             }
         }
