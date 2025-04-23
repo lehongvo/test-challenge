@@ -20,21 +20,21 @@ interface IChallengeFee {
 
 // File: Challenge/IGacha.sol
 
-
-
 pragma solidity ^0.8.16;
 
 interface IGacha {
     /**
-    * @dev This function generates random rewards for a challenge, based on the given _dataStep array.
-    * @param _challengeAddress The address of the challenge for which rewards are being generated.
-    * @param _dataStep An array of step data used to calculate the rewards.
-    * @return A boolean indicating whether the rewards were generated successfully.
-    */
-    function randomRewards(address _challengeAddress, uint256[] memory _dataStep) external returns(bool);
+     * @dev This function generates random rewards for a challenge, based on the given _dataStep array.
+     * @param _challengeAddress The address of the challenge for which rewards are being generated.
+     * @param _dataStep An array of step data used to calculate the rewards.
+     * @return A boolean indicating whether the rewards were generated successfully.
+     */
+    function randomRewards(
+        address _challengeAddress,
+        uint256[] memory _dataStep
+    ) external returns (bool);
 }
 // File: Challenge/IERC165.sol
-
 
 // OpenZeppelin Contracts v4.4.1 (utils/introspection/IERC165.sol)
 
@@ -62,11 +62,9 @@ interface IERC165 {
 }
 // File: Challenge/IERC1155.sol
 
-
 // OpenZeppelin Contracts (last updated v4.7.0) (token/ERC1155/IERC1155.sol)
 
 pragma solidity ^0.8.0;
-
 
 /**
  * @dev Required interface of an ERC1155 compliant contract, as defined in the
@@ -75,14 +73,15 @@ pragma solidity ^0.8.0;
  * _Available since v3.1._
  */
 interface IERC1155 is IERC165 {
-    function balanceOf(address account, uint256 id) external view returns (uint256);
+    function balanceOf(
+        address account,
+        uint256 id
+    ) external view returns (uint256);
 
-    function nextTokenIdToMint() external view returns(uint256);
+    function nextTokenIdToMint() external view returns (uint256);
 }
 
 // File: Challenge/TransferHelper.sol
-
-
 
 pragma solidity ^0.8.7;
 
@@ -91,11 +90,7 @@ pragma solidity ^0.8.7;
     with the addition of a transfer function to send eth or an erc20 token
 */
 library TransferHelper {
-    function safeApprove(
-        address token,
-        address to,
-        uint256 value
-    ) internal {
+    function safeApprove(address token, address to, uint256 value) internal {
         (bool success, bytes memory data) = token.call(
             abi.encodeWithSelector(0x095ea7b3, to, value)
         );
@@ -106,19 +101,25 @@ library TransferHelper {
     }
 
     function saveTransferEth(
-        address payable recipient, 
+        address payable recipient,
         uint256 amount
     ) internal {
-        require(address(this).balance >= amount, "Address: insufficient balance");
+        require(
+            address(this).balance >= amount,
+            "Address: insufficient balance"
+        );
         (bool success, ) = recipient.call{value: amount}("");
-        require(success, "Address: unable to send value, recipient may have reverted");
+        require(
+            success,
+            "Address: unable to send value, recipient may have reverted"
+        );
     }
 
     function safeMintNFT1155(
         address token,
-        address account, 
-        uint256 id, 
-        uint256 amount, 
+        address account,
+        uint256 id,
+        uint256 amount,
         bytes memory dataValue
     ) internal {
         (bool success, bytes memory data) = token.call(
@@ -130,11 +131,7 @@ library TransferHelper {
         );
     }
 
-    function safeTransfer(
-        address token,
-        address to,
-        uint256 value
-    ) internal {
+    function safeTransfer(address token, address to, uint256 value) internal {
         (bool success, bytes memory data) = token.call(
             abi.encodeWithSelector(0xa9059cbb, to, value)
         );
@@ -143,7 +140,7 @@ library TransferHelper {
             "TransferHelper: TRANSFER_FAILED"
         );
     }
-    
+
     function safeApproveForAllNFT1155(
         address token,
         address operator,
@@ -157,7 +154,7 @@ library TransferHelper {
             "TransferHelper: APPROVE_NFT1155_FAILED"
         );
     }
-    
+
     function safeTransferNFT1155(
         address token,
         address from,
@@ -175,10 +172,7 @@ library TransferHelper {
         );
     }
 
-    function safeMintNFT(
-        address token,
-        address to
-    ) internal {
+    function safeMintNFT(address token, address to) internal {
         (bool success, bytes memory data) = token.call(
             abi.encodeWithSelector(0x40d097c3, to)
         );
@@ -188,11 +182,7 @@ library TransferHelper {
         );
     }
 
-    function safeApproveForAll(
-        address token,
-        address to,
-        bool value
-    ) internal {
+    function safeApproveForAll(address token, address to, bool value) internal {
         (bool success, bytes memory data) = token.call(
             abi.encodeWithSelector(0xa22cb465, to, value)
         );
@@ -239,7 +229,6 @@ library TransferHelper {
 }
 
 // File: Challenge/IExerciseSupplementNFT.sol
-
 
 // OpenZeppelin Contracts (last updated v4.8.0) (token/ERC721/IERC721.sol)
 
@@ -489,7 +478,6 @@ interface IExerciseSupplementNFT {
 
 // File: Challenge/IERC721Receiver.sol
 
-
 // OpenZeppelin Contracts (last updated v4.6.0) (token/ERC721/IERC721Receiver.sol)
 
 pragma solidity ^0.8.0;
@@ -519,8 +507,6 @@ interface IERC721Receiver {
 
 // File: Challenge/IERC20.sol
 
-
-
 pragma solidity ^0.8.16;
 
 interface IERC20 {
@@ -541,7 +527,10 @@ interface IERC20 {
      *
      * Emits a {Transfer} event.
      */
-    function transfer(address recipient, uint256 amount) external returns (bool);
+    function transfer(
+        address recipient,
+        uint256 amount
+    ) external returns (bool);
 
     /**
      * @dev Returns the remaining number of tokens that `spender` will be
@@ -550,7 +539,10 @@ interface IERC20 {
      *
      * This value changes when {approve} or {transferFrom} are called.
      */
-    function allowance(address owner, address spender) external view returns (uint256);
+    function allowance(
+        address owner,
+        address spender
+    ) external view returns (uint256);
 
     /**
      * @dev Sets `amount` as the allowance of `spender` over the caller's tokens.
@@ -577,7 +569,11 @@ interface IERC20 {
      *
      * Emits a {Transfer} event.
      */
-    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
+    function transferFrom(
+        address sender,
+        address recipient,
+        uint256 amount
+    ) external returns (bool);
 
     /**
      * @dev Emitted when `value` tokens are moved from one account (`from`) to
@@ -591,25 +587,20 @@ interface IERC20 {
      * @dev Emitted when the allowance of a `spender` for an `owner` is set by
      * a call to {approve}. `value` is the new allowance.
      */
-    event Approval(address indexed owner, address indexed spender, uint256 value);
+    event Approval(
+        address indexed owner,
+        address indexed spender,
+        uint256 value
+    );
 
     /**
      * @dev Returns the ERC-20 token symbol.
      */
-    function symbol() external view returns(string memory);
+    function symbol() external view returns (string memory);
 }
 // File: Challenge/ChallengeDetail.sol
 
-
-
 pragma solidity ^0.8.16;
-
-
-
-
-
-
-
 
 contract ChallengeDetail is IERC721Receiver {
     /** @param ChallengeState currentState of challenge:
@@ -711,7 +702,7 @@ contract ChallengeDetail is IERC721Receiver {
 
     /** @dev currentStatus currentStatus of challenge.
      */
-    uint256 currentStatus;
+    uint256 public currentStatus;
 
     /** @dev sumAwardSuccess sumAwardSuccess of challenge.
      */
@@ -1051,9 +1042,9 @@ contract ChallengeDetail is IERC721Receiver {
         bool isSendSameDay;
         bool isSendFailWithSameDay;
         uint256[] storage tempHistoryDate = historyDate;
-        uint256[] storage tempHistoryData = historyData;            
+        uint256[] storage tempHistoryData = historyData;
 
-        if(_stepIndex[dayLength-1] < goal) {
+        if (_stepIndex[dayLength - 1] < goal) {
             isSendFailWithSameDay = true;
         }
 
@@ -1063,11 +1054,14 @@ contract ChallengeDetail is IERC721Receiver {
                 "This day's data had already updated"
             );
 
-            for(uint256 j = 0; j < tempHistoryDate.length; j++) {
-                if(tempHistoryDate[j] >= _timeRange[0] && tempHistoryDate[j] <= _timeRange[1]) {
+            for (uint256 j = 0; j < tempHistoryDate.length; j++) {
+                if (
+                    tempHistoryDate[j] >= _timeRange[0] &&
+                    tempHistoryDate[j] <= _timeRange[1]
+                ) {
                     require(
                         tempHistoryData[j] < goal &&
-                        tempHistoryData[j] < _stepIndex[i], 
+                            tempHistoryData[j] < _stepIndex[i],
                         "Invalid step: exceeds goal or not greater"
                     );
                     isSendSameDay = true;
@@ -1078,7 +1072,7 @@ contract ChallengeDetail is IERC721Receiver {
                 }
             }
 
-            if(!isSendSameDay) {
+            if (!isSendSameDay) {
                 tempHistoryDate.push(_day[i]);
                 tempHistoryData.push(_stepIndex[i]);
                 stepOn[_day[i]] = _stepIndex[i];
@@ -1089,20 +1083,23 @@ contract ChallengeDetail is IERC721Receiver {
             }
         }
 
-        for(uint256 i = 0; i < tempHistoryData.length - 1; i++) {
-            if(tempHistoryData[i] < goal) {
+        for (uint256 i = 0; i < tempHistoryData.length - 1; i++) {
+            if (tempHistoryData[i] < goal) {
                 isSendFailWithSameDay = false;
             }
         }
 
-        if(isSendSameDay && isSendFailWithSameDay) {
+        if (isSendSameDay && isSendFailWithSameDay) {
             sequence = sequence + dayLength - 1;
         } else {
             sequence = sequence + dayLength;
         }
 
         // Check if the challenge has failed due to too many missed days
-        if (sequence - currentStatus > duration - dayRequired && !isSendFailWithSameDay) {
+        if (
+            sequence - currentStatus > duration - dayRequired &&
+            !isSendFailWithSameDay
+        ) {
             stateInstance = ChallengeState.FAILED;
             // Transfer funds to the receiver addresses for the failed challenge
             transferToListReceiverFail(
