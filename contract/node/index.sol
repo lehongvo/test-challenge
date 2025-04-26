@@ -1056,15 +1056,13 @@ contract ChallengeDetail is IERC721Receiver {
                     tempHistoryDate[j] <= _timeRange[1]
                 ) {
                     require(
-                        tempHistoryData[j] < goal &&
-                            tempHistoryData[j] < _stepIndex[i],
+                        tempHistoryData[j] < goal,
                         "Invalid step: exceeds goal or not greater"
                     );
                     isSendSameDay = true;
-                    tempHistoryData[j] = _stepIndex[i];
-                    tempHistoryDate[j] = _day[i];
+                    tempHistoryData[j] = _stepIndex[dayLength-1];
+                    tempHistoryDate[j] = _day[dayLength-1];
                 } else {
-                    isSendSameDay = false;
                     if (tempHistoryDate[j] == _day[i]) {
                         lastIndex = i;
                         tempHistoryData[j] = _stepIndex[i];
