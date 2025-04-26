@@ -1041,6 +1041,7 @@ contract ChallengeDetail is IERC721Receiver {
         uint dayLength = _day.length;
         bool isSendSameDay;
         bool isSendFailWithSameDay;
+        uint256 lastIndex = totalReward;
         uint256[] storage tempHistoryDate = historyDate;
         uint256[] storage tempHistoryData = historyData;
 
@@ -1049,11 +1050,6 @@ contract ChallengeDetail is IERC721Receiver {
         }
 
         for (uint256 i = 0; i < dayLength; i++) {
-            require(
-                stepOn[_day[i]] == 0,
-                "This day's data had already updated"
-            );
-
             for (uint256 j = 0; j < tempHistoryDate.length; j++) {
                 if (
                     tempHistoryDate[j] >= _timeRange[0] &&
@@ -1069,12 +1065,18 @@ contract ChallengeDetail is IERC721Receiver {
                     tempHistoryDate[j] = _day[i];
                 } else {
                     isSendSameDay = false;
+                    if (tempHistoryDate[j] == _day[i]) {
+                        lastIndex = i;
+                        tempHistoryData[j] = _stepIndex[i];
+                    }
                 }
             }
 
             if (!isSendSameDay) {
-                tempHistoryDate.push(_day[i]);
-                tempHistoryData.push(_stepIndex[i]);
+                if (lastIndex != i) {
+                    tempHistoryDate.push(_day[i]);
+                    tempHistoryData.push(_stepIndex[i]);
+                }
                 stepOn[_day[i]] = _stepIndex[i];
             }
 
@@ -1098,7 +1100,8 @@ contract ChallengeDetail is IERC721Receiver {
         // Check if the challenge has failed due to too many missed days
         if (
             sequence - currentStatus > duration - dayRequired &&
-            !isSendFailWithSameDay
+            !isSendFailWithSameDay &&
+            lastIndex == totalReward
         ) {
             stateInstance = ChallengeState.FAILED;
             // Transfer funds to the receiver addresses for the failed challenge
